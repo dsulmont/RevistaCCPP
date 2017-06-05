@@ -1,0 +1,111 @@
+---
+title: "1. Base de Datos"
+author: "David Sulmont"
+date: "5 de junio de 2017"
+output: html_document
+---
+
+# CARGA DE DATOS
+
+```{r}
+library(foreign)
+library(ggplot2)
+gicel1 <- read.spss("Gicel_post.sav", to.data.frame=T)
+names(gicel1)
+```
+
+# ESCALA ESTATISMO
+
+```{r}
+library(plyr)
+library(car)
+
+estat <-gicel1[, 112:119]
+
+indx <- sapply(estat, is.factor)
+
+estat[indx] <- lapply(estat[indx], function(x) as.numeric(x))
+
+estat[indx] <- lapply(estat[indx], function (x) recode(x, "1=NA; 7:8=NA"))
+estat[indx] <- lapply(estat[indx], function (x) {x <- ((x-2)-4)*(-1)})
+names(estat)
+estat$ind.est <- rowSums(estat)
+
+estat$ind.est <- (estat$ind.est/32)*100
+summary(estat)
+table(estat$ind.est, exclude=NULL)
+summary(estat$ind.est)
+hist((estat$ind.est)^2)
+
+estat2 <- estat[, 1:8]
+
+fit <- princomp(na.omit(estat2), cor=T)
+summary(fit)
+loadings(fit)
+
+
+library(psych)
+fit <- principal(na.omit(estat2), nfactors=1)
+fit
+alpha(estat2)
+```
+
+# ESCALA ILIBERALISMO
+
+```{r}
+names(gicel1)
+ilib <-gicel1[, 120:127]
+
+indx <- sapply(ilib, is.factor)
+
+ilib[indx] <- lapply(ilib[indx], function(x) as.numeric(x))
+
+ilib[indx] <- lapply(ilib[indx], function (x) recode(x, "1=NA; 7:8=NA"))
+ilib[indx] <- lapply(ilib[indx], function (x) {x <- ((x-2)-4)*(-1)})
+names(ilib)
+ilib$ind.ilib <- rowSums(ilib)
+
+ilib$ind.ilib <- (ilib$ind.ilib/32)*100
+
+table(ilib$ind.ilib, exclude=NULL)
+summary(ilib$ind.ilib)
+hist(ilib$ind.ilib)
+
+summary(ilib)
+
+ilib2 <- ilib[, 1:8]
+
+fit <- princomp(na.omit(ilib2), cor=T)
+summary(fit)
+loadings(fit)
+
+
+library(psych)
+fit <- principal(na.omit(ilib2), nfactors=1)
+fit
+alpha(ilib2)
+```
+
+
+# SE AÑADE LOS ÍNDICES A LA BD
+
+```{r}
+gicel1$ind.est <- estat$ind.est
+gicel1$ind.ilib <- ilib$ind.ilib
+
+cor.test(gicel1$ind.ilib, gicel1$ind.est, gicel1$izde.e, use="pairwise")
+gicel1$izde.e <- as.numeric(gicel1$P20)
+table(gicel1$izde.e)
+gicel1$izde.e <- recode(gicel1$izde.e, "13:14=NA")
+gicel1$izde.e <- gicel1$izde.e-2
+
+misvar <- c("ind.ilib", "ind.est", "izde.e")
+data1 <- gicel1[misvar]
+cor(na.omit(data1))
+```
+
+Grabar la BD
+
+```{r}
+save(gicel1, file = "gicel1.Rdata")
+```
