@@ -2,12 +2,7 @@
 
 # Carga de datos del CSES moludo 3
 
-load("cses3.rdata")
-
-# Selección de Perú
-
-cses3.pe <- subset(cses3, C1004=="PER_2011")
-save(cses3.pe, file= "cses3_p3.rdata")
+load("cses3_p3.rdata")
 
 
 # Tabla IZDE de Partidos y elector
@@ -19,6 +14,7 @@ table(cses3.pe$C3013)
 cses3.pe$izdehum <- cses3.pe$C3011_A
 cses3.pe$izdefuji <- cses3.pe$C3011_B
 cses3.pe$izdeppk <- cses3.pe$C3011_C
+cses3.pe$izdetol <- cses3.pe$C3011_D
 cses3.pe$izdee <- cses3.pe$C3013
 
 cses3.pe$izdee[cses3.pe$izdee == 98] <- NA
@@ -85,9 +81,9 @@ g.izde11_16 <- ggplot(pos.izder, aes(x = eval, y = mean)) + geom_point() +
   geom_errorbar(aes(ymin = mean - CI.mean.0.95, ymax = mean + CI.mean.0.95), width = 0.5) +
   facet_grid(.~ year, scales = "free", space = "free") +
   ylab("Escala Izquierda - Derecha") + xlab("") +
-  ggtitle("Posición media del elector y principales candidatos presidenciales 2011 y 2016 \nen la escala Izquierda - Derecha, según elección (Media e intervalo de confianza al 95%)") +
+  ggtitle("Posición media del elector y de los principales candidatos presidenciales 2011 y 2016 \nen la escala Izquierda - Derecha, según elección \nMedia e intervalo de confianza al 95%") +
   theme_bw()
 
-png("g_izde11y16.png")
+png("g_izde11y16.png", width = 800, height = 600, res = 100)
 g.izde11_16
 dev.off()
