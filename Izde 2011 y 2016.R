@@ -3,7 +3,7 @@
 # Carga de datos del CSES moludo 3
 
 load("cses3_p3.rdata")
-
+load("gicel1.Rdata")
 
 # Tabla IZDE de Partidos y elector
 
