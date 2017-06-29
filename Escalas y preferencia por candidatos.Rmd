@@ -1,0 +1,190 @@
+---
+title: "Preferencias y escalas"
+output: html_document
+---
+
+# Carga de datos y de paquetes
+
+```{r}
+load("gicel1.Rdata")
+library(Rmisc)
+library(ggplot2)
+```
+
+# Recodificación variables de preferencia por candidatos
+
+```{r}
+gicel1$gusta.kf <- gicel1$P18A
+gicel1$gusta.kf[gicel1$gusta.kf > 10] <- NA
+
+gicel1$gusta.ppk <- gicel1$P18B
+gicel1$gusta.ppk[gicel1$gusta.ppk > 10] <- NA
+
+gicel1$gusta.vm <- gicel1$P18C
+gicel1$gusta.vm[gicel1$gusta.vm > 10] <- NA
+```
+
+# Recodificación de variables de actitudes políticas
+
+
+```{r}
+# Izquierda - derecha
+
+izdee.g <- cut(gicel1$izde.e, breaks = c(0,3,6,10), include.lowest = T)
+levels(izdee.g) <- c("Izquierda", "Centro", "Derecha")
+
+
+# Discrecionalidad
+
+#gicel1$ind.ilib.g <-  cut(gicel1$ind.ilib, breaks = c(0, 40, 60, 80, 100), 
+#                         include.lowest = T)
+
+gicel1$ind.ilib.g <-  cut(gicel1$ind.ilib, breaks = 3, 
+                         include.lowest = T)
+
+
+# Estatismo
+
+# gicel1$ind.est.g <-  cut(gicel1$ind.est, breaks = c(0, 40, 60, 80, 100), 
+#                         include.lowest = T)
+
+gicel1$ind.est.g <-  cut(gicel1$ind.est, breaks = 3)
+
+
+
+
+
+```
+
+
+# Estadísticos descriptivos
+
+##Gusto por candidatos según izquierda - derecha
+
+
+```{r}
+kf.izde <- na.omit(summarySE(data = gicel1, measurevar = "gusta.kf", 
+          groupvars = "izdee.g", na.rm = T))
+
+ppk.izde <- na.omit(summarySE(data = gicel1, measurevar = "gusta.ppk", 
+          groupvars = "izdee.g", na.rm = T))
+
+vm.izde <- na.omit(summarySE(data = gicel1, measurevar = "gusta.vm", 
+          groupvars = "izdee.g", na.rm = T))
+
+kf.izde$cand <- c("Fujimori")
+ppk.izde$cand <- c("PPK")
+vm.izde$cand <- c("Mendoza")
+
+colnames(kf.izde) <- c("izde", "N", "Media", "SD", "SE", "ci", "cand" )
+colnames(ppk.izde) <- c("izde", "N", "Media", "SD", "SE", "ci", "cand" )
+colnames(vm.izde) <- c("izde", "N", "Media", "SD", "SE", "ci", "cand" )
+
+df.izde.c <- rbind(kf.izde, ppk.izde, vm.izde)
+df.izde.c
+```
+
+###Gráfico
+
+```{r}
+# The errorbars overlapped, so use position_dodge to move them horizontally
+pd <- position_dodge(0.1) # move them .05 to the left and right
+
+ggplot(df.izde.c, aes(x=izde, y=Media, group=cand, shape=cand)) + 
+  geom_errorbar(aes(ymin=Media-ci, ymax=Media+ci), width=0.2, position=pd) +
+  geom_line(aes(linetype=cand), position=pd) +
+  geom_point(position=pd, size = 2.5) +
+  ylim(0, 10) + 
+  xlab("Posición Izquierda - Derecha (agrupada)") +
+  ylab("Preferencia por candidato") +
+  ggtitle("Nivel de preferencia por candidato (media e intervalo de confianza al 95%) \nsegún posición izquierda - derecha del entrevistado, por candidato") +
+  theme_bw()
+  
+```
+
+
+##Gusto por candidatos según estatismo
+
+
+```{r}
+kf.estat <- na.omit(summarySE(data = gicel1, measurevar = "gusta.kf", 
+          groupvars = "ind.est.g", na.rm = T))
+
+ppk.estat <- na.omit(summarySE(data = gicel1, measurevar = "gusta.ppk", 
+          groupvars = "ind.est.g", na.rm = T))
+
+vm.estat <- na.omit(summarySE(data = gicel1, measurevar = "gusta.vm", 
+          groupvars = "ind.est.g", na.rm = T))
+
+kf.estat$cand <- c("Fujimori")
+ppk.estat$cand <- c("PPK")
+vm.estat$cand <- c("Mendoza")
+
+colnames(kf.estat) <- c("estat", "N", "Media", "SD", "SE", "ci", "cand" )
+colnames(ppk.estat) <- c("estat", "N", "Media", "SD", "SE", "ci", "cand" )
+colnames(vm.estat) <- c("estat", "N", "Media", "SD", "SE", "ci", "cand" )
+
+df.estat.c <- rbind(kf.estat, ppk.estat, vm.estat)
+df.estat.c
+```
+
+###Gráfico
+
+```{r}
+# The errorbars overlapped, so use position_dodge to move them horizontally
+pd <- position_dodge(0.1) # move them .05 to the left and right
+
+ggplot(df.estat.c, aes(x=estat, y=Media, group=cand, shape=cand)) + 
+  geom_errorbar(aes(ymin=Media-ci, ymax=Media+ci), width=0.2, position=pd) +
+  geom_line(aes(linetype=cand), position=pd) +
+  geom_point(position=pd, size = 2.5) +
+  ylim(0, 10) + 
+   xlab("Escala estatismo (agrupada)") +
+  ylab("Preferencia por candidato") +
+  ggtitle("Nivel de preferencia por candidato (media e intervalo de confianza al 95%) \nsegún escala de estatismo, por candidato") +
+  theme_bw()
+  
+```
+
+##Gusto por candidatos según discrecionalidad
+
+
+```{r}
+kf.disc <- na.omit(summarySE(data = gicel1, measurevar = "gusta.kf", 
+          groupvars = "ind.ilib.g", na.rm = T))
+
+ppk.disc <- na.omit(summarySE(data = gicel1, measurevar = "gusta.ppk", 
+          groupvars = "ind.ilib.g", na.rm = T))
+
+vm.disc <- na.omit(summarySE(data = gicel1, measurevar = "gusta.vm", 
+          groupvars = "ind.ilib.g", na.rm = T))
+
+kf.disc$cand <- c("Fujimori")
+ppk.disc$cand <- c("PPK")
+vm.disc$cand <- c("Mendoza")
+
+colnames(kf.disc) <- c("disc", "N", "Media", "SD", "SE", "ci", "cand" )
+colnames(ppk.disc) <- c("disc", "N", "Media", "SD", "SE", "ci", "cand" )
+colnames(vm.disc) <- c("disc", "N", "Media", "SD", "SE", "ci", "cand" )
+
+df.disc.c <- rbind(kf.disc, ppk.disc, vm.disc)
+df.disc.c
+```
+
+###Gráfico
+
+```{r}
+# The errorbars overlapped, so use position_dodge to move them horizontally
+pd <- position_dodge(0.1) # move them .05 to the left and right
+
+ggplot(df.disc.c, aes(x=disc, y=Media, group=cand, shape=cand, colour=cand)) + 
+  geom_errorbar(aes(ymin=Media-ci, ymax=Media+ci), width=0.2, position=pd) +
+  geom_line(aes(linetype=cand), position=pd) +
+  geom_point(position=pd, size = 2.5) +
+  ylim(0, 10) + 
+   xlab("Escala discrecionalidad (agrupada)") +
+  ylab("Preferencia por candidato") +
+  ggtitle("Nivel de preferencia por candidato (media e intervalo de confianza al 95%) \nsegún escala de discrecionalidad, por candidato") +
+  theme_bw()
+  
+```
