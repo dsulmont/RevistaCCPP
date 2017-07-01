@@ -1,0 +1,184 @@
+---
+title: "Base de datos traspuesta"
+author: "David Sulmont - Pontificia Universidad Católica del Perú"
+date: "11 de julio de 2016"
+output: html_document
+---
+
+# ACONDICIONAMIENTO DE DATOS
+
+
+```{r}
+library(car)
+load("gicel1.Rdata")
+names(gicel1)
+NRO <- gicel1$NRO
+```
+
+## Dummy voto 1ra vuelta
+
+```{r}
+voto1v.n <- as.numeric(gicel1$voto1v)
+
+voto1a <- recode(voto1v.n, "1=1; NA=NA; else=0")
+voto1b <- recode(voto1v.n, "2=1; NA=NA; else=0")
+voto1c <- recode(voto1v.n, "3=1; NA=NA; else=0")
+voto1d <- recode(voto1v.n, "4=1; NA=NA; else=0")
+voto1e <- recode(voto1v.n, "5=1; NA=NA; else=0")
+voto1f <- recode(voto1v.n, "6=1; NA=NA; else=0")
+
+df.voto1 <- data.frame(NRO, voto1a, voto1b, voto1c, voto1d, voto1e, voto1f)
+
+```
+
+## Dummy voto 2da vuelta
+
+```{r}
+voto2.n <- as.numeric(gicel1$voto2v)
+voto2a <- recode(voto2.n, "1=1; NA=NA; else=0")
+voto2b <- recode(voto2.n, "2=1; NA=NA; else=0")
+
+df.voto2 <- data.frame(NRO, voto2a, voto2b)
+```
+
+## Data frame izquierda - derecha Candidatos
+
+```{r}
+var.izde <- c("P19A", "P19B", "P19C", "P19D", "P19E", "P19H")
+
+df.izdep <- gicel1[var.izde]
+
+df.izdep <- as.data.frame(lapply(df.izdep, function (x) recode(x, "12:99=NA")))
+
+colnames(df.izdep) <- c("izdep.a", "izdep.b", "izdep.c", "izdep.d", "izdep.e", "izdep.f")
+```
+
+## Data Frame No me gusta - gusta Candidatos
+
+```{r}
+var.gustac <- c("P18A", "P18B", "P18C", "P18D", "P18E", "P18H")
+
+df.gustac <-gicel1[var.gustac] 
+
+df.gustac <- as.data.frame(lapply(df.gustac, function (x) recode(x, "12:99=NA")))
+
+colnames(df.izdep) <- c("like.a", "like.b", "like.c", "like.d", "like.e", "like.f")
+
+df.gustac <- cbind(NRO, df.gustac)
+df.gustac
+```
+
+## Data frame Estatismo y Discrecionalidad
+
+```{r}
+df.estat.c <- cbind(NRO, cand.eco)
+
+df.disc.c <- cbind(NRO, cand.disc)
+
+```
+
+
+## TRASPONER DATOS Y ARMAR DATA FRAME DE TRABAJO
+
+Data frame de base:
+
+```{r}
+myvars1 <- c("NRO", "EDAD", "SEXO", "nse1", "P54", "AMBITO", "DOMINIO",
+             "voto1v", "voto2v", "ind.est", "ind.ilib", "izde.e")
+
+data.t1 <- gicel1[myvars1]
+
+data.t1 <- cbind(data.t1, df.izdep)
+
+library(reshape)
+
+df.t1 <- melt(data.t1, id=(c("NRO", "EDAD", "SEXO", "nse1", "P54", "AMBITO", "DOMINIO",
+             "voto1v", "voto2v", "ind.est", "ind.ilib", "izde.e")))
+
+names(df.t1)
+
+colnames(df.t1) <- c("NRO", "EDAD", "SEXO", "nse1", "P54", "AMBITO", "DOMINIO",
+             "voto1v", "voto2v", "ind.est", "ind.ilib", "izde.e", "nompart", "izde.part")
+
+```
+
+Data frame no me gusta - gusta
+
+```{r}
+library(reshape)
+df.t2 <- melt(df.gustac, id=(c("NRO")))
+
+colnames(df.t2) <- c("id", "candidato", "gusta.c")
+
+df.t3 <- cbind(df.t1, df.t2)
+
+table(df.t3$candidato2)
+
+df.t3$candidato2 <- factor(as.numeric(df.t3$candidato))
+
+levels(df.t3$candidato2) <- c("Fujimori", "PPK", "Mendoza","Barnechea", "García", "Santos" )
+```
+
+Juntar data frame estatismo y discrecionalidad
+
+```{r}
+
+df.t.eco <- melt(df.estat.c, id=(c("NRO")))
+
+colnames(df.t.eco) <- c("id.2", "part.2", "estat.cand")
+
+estat.cand <- df.t.eco$estat.cand
+
+df.t3 <- cbind(df.t3, estat.cand)
+
+
+df.t.disc <- melt(df.disc.c, id=(c("NRO")))
+
+disc.cand <- df.t.disc$value 
+
+df.t3 <- cbind(df.t3, disc.cand)
+```
+
+## CÁLCULO Y RECODIFICACIÓN DE VARIABLES
+
+```{r}
+
+gicel.t <- df.t3
+
+# Gusto Candidato
+
+gicel.t$gusta.c <- gicel.t$gusta.c*10
+
+# Utilidad Izquierda - Derecha
+
+gicel.t$util.ID <- (((gicel.t$izde.e-5)-(gicel.t$izde.part-5))^2)*(-1)
+
+# Utilidad Estatismo
+
+gicel.t$util.est <- -(((gicel.t$ind.est/10)-5)-((gicel.t$estat.cand/10)-5))^2
+
+# Utilidad Discrecionalidad
+
+gicel.t$util.disc <- -(((gicel.t$ind.ilib/10)-5)-((gicel.t$disc.cand/10)-5))^2
+
+# Educación
+
+gicel.t$educ <- as.numeric(gicel.t$P54)-1
+
+#NSE
+
+table(gicel.t$nse1)
+
+gicel.t$nse <- -(as.numeric(gicel.t$nse1)-6)
+table(gicel.t$nse)
+table(gicel.t$nse1)
+
+names(gicel.t)
+
+library(Rmisc)
+
+summarySE(gicel.t, measurevar="estat.cand", groupvars = "candidato2", na.rm=T)
+summarySE(gicel.t, measurevar="disc.cand", groupvars = "candidato2", na.rm=T)
+summarySE(gicel.t, measurevar="gusta.c", groupvars = c("voto1v","candidato2"), na.rm=T)
+
+```

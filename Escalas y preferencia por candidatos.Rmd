@@ -188,3 +188,16 @@ ggplot(df.disc.c, aes(x=disc, y=Media, group=cand, shape=cand, colour=cand)) +
   theme_bw()
   
 ```
+
+```{r}
+cor(gicel1$gusta.kf, gicel1$g.repre, gicel1$g.progsoc,  use = "complete.obs")
+
+names(gicel1)
+
+subdata <- gicel1[, c(313:319, 322:324)]
+names(subdata)
+
+rcorr(as.matrix(subdata))
+
+```
+

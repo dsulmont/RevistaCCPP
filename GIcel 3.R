@@ -25,3 +25,15 @@ table(gicel_panel$P3_PANEL)
 
 
 prop.table(table(gicel_panel$P3_PANEL, gicel_panel$P10),2)*100
+
+names(gicel_panel)
+
+
+table(gicel_panel$P8_PANEL)
+table(gicel_panel$izde_panel)
+
+
+t.test(gicel_panel$izde.e, gicel_panel$izde_panel, paired = T)
+
+
+mis
