@@ -78,7 +78,7 @@ library(ggplot2)
 
 g.izde11_16 <- ggplot(pos.izder, aes(x = eval, y = mean)) + geom_point() +
   ylim(2, 8) +
-  geom_errorbar(aes(ymin = mean - CI.mean.0.95, ymax = mean + CI.mean.0.95), width = 0.5) +
+  geom_errorbar(aes(ymin = mean - CI.mean.0.95, ymax = mean + CI.mean.0.95), width = 0.1) +
   facet_grid(.~ year, scales = "free", space = "free") +
   ylab("Escala Izquierda - Derecha") + xlab("") +
   ggtitle("Posición media del elector y de los principales candidatos presidenciales 2011 y 2016 \nen la escala Izquierda - Derecha, según elección \nMedia e intervalo de confianza al 95%") +

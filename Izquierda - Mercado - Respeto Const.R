@@ -38,11 +38,99 @@ misvar <- c("gusta.kf","gusta.ppk","gusta.vm", "mdo.kf", "mdo.ppk", "mdo.vm",
             "const.kf", "const.ppk", "const.vm", "ind.est", "ind.ilib", "izde.e")
 data <- gicel1[misvar]
 
+library(Hmisc)
 rcorr(as.matrix(data))
 
 summarySE(data = gicel1, measurevar = "const.kf", groupvars = "gusta.kf", na.rm = T)
 
 
-summary(data)
+gicel1$g.kf2 <- cut(gicel1$gusta.kf, breaks = 3)
+gicel1$g.ppk2 <- cut(gicel1$gusta.ppk, breaks = 3)
+gicel1$g.vm2 <- cut(gicel1$gusta.vm, breaks = 3)
+
+prop.table(table(g.kf2))*100
+prop.table(table(g.ppk2))*100
+prop.table(table(g.vm2))*100
 
 
+prop.table(table(gicel1$voto1v, g.kf2),2)*100
+prop.table(table(gicel1$voto1v, g.ppk2),2)*100
+prop.table(table(gicel1$voto1v, g.vm2),2)*100
+
+prop.table(table(gicel1$voto2v, g.kf2),2)*100
+prop.table(table(gicel1$voto2v, g.ppk2),2)*100
+prop.table(table(gicel1$voto2v, g.vm2),2)*100
+
+summarySE(data = gicel1, measurevar = "izde.e", groupvars = c("g.kf2"), 
+          na.rm = T)
+
+summarySE(data = gicel1, measurevar = "izde.e", groupvars = c("g.ppk2"), 
+          na.rm = T)
+
+summarySE(data = gicel1, measurevar = "izde.e", groupvars = c("g.vm2"), 
+          na.rm = T)
+
+summarySE(data = gicel1, measurevar = "ind.ilib", groupvars = c("g.kf2"), 
+          na.rm = T)
+
+summarySE(data = gicel1, measurevar = "ind.ilib", groupvars = c("g.ppk2"), 
+          na.rm = T)
+
+summarySE(data = gicel1, measurevar = "ind.ilib", groupvars = c("g.vm2"), 
+          na.rm = T)
+
+summarySE(data = gicel1, measurevar = "ind.est", groupvars = c("g.kf2"), 
+          na.rm = T)
+
+summarySE(data = gicel1, measurevar = "ind.est", groupvars = c("g.ppk2"), 
+          na.rm = T)
+
+summarySE(data = gicel1, measurevar = "ind.est", groupvars = c("g.vm2"), 
+          na.rm = T)
+
+summary(aov(ind.est~g.ppk2, data = gicel1))
+
+TukeyHSD(aov(ind.est~g.ppk2, data = gicel1))
+
+summary(aov(ind.ilib~g.vm2, data = gicel1))
+
+names(gicel1)
+
+summarySE(data = gicel1, measurevar = "const.kf", 
+          groupvars = c("ind.ilib.g", "g.kf2"), na.rm=T)
+
+reg.gustakf <- lm(gusta.kf~const.kf+ind.ilib+ind.est+mdo.kf+izde.e, data = gicel1)
+
+reg.gusta.ppk <- lm(gusta.ppk~const.ppk+ind.ilib+ind.est+mdo.ppk+izde.e, data = gicel1)
+
+reg.gusta.vm <- lm(gusta.vm~const.vm+ind.ilib+ind.est+mdo.vm+izde.e, data = gicel1)
+
+library(MASS)
+
+summary(reg.gustakf)
+summary(reg.gusta.ppk)
+summary(reg.gusta.vm)
+
+names(gicel1)
+
+
+library(Rmisc)
+summarySE(data = gicel1, measurevar = "ind.ilib", groupvars = "izdee.g", na.rm = T)
+summarySE(data = gicel1, measurevar = "ind.est", groupvars = "izdee.g", na.rm = T)
+
+summary(aov(ind.est~izdee.g, data = gicel1))
+
+TukeyHSD(aov(ind.est~izdee.g, data = gicel1))
+
+cor.test(gicel1$izde.e, gicel1$ind.est, use = "complete.obs")
+
+tabla.cont(gicel1, "ind.ilib.g", "izdee.g", pc = "col", asoc = T)
+
+names(gicel1)
+
+
+summary(lm(izde.kf~const.kf+mdo.kf, data = gicel1))
+summary(lm(izde.ppk~const.ppk+mdo.ppk, data = gicel1))
+summary(lm(izde.vm~const.vm+mdo.vm, data = gicel1))
+
+boxplot(const)

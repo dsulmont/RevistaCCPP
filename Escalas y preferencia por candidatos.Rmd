@@ -30,7 +30,7 @@ gicel1$gusta.vm[gicel1$gusta.vm > 10] <- NA
 ```{r}
 # Izquierda - derecha
 
-izdee.g <- cut(gicel1$izde.e, breaks = c(0,3,6,10), include.lowest = T)
+gicel1$ izdee.g <- cut(gicel1$izde.e, breaks = c(0,3,6,10), include.lowest = T)
 levels(izdee.g) <- c("Izquierda", "Centro", "Derecha")
 
 
