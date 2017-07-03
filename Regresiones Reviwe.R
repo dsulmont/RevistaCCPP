@@ -46,6 +46,43 @@ summary(reg.gustappk2)
 reg.gustavm1 <- lm(gusta.vm100~SEXO+EDAD+nivedu+nse.r+DOMINIO, data = gicel1)
 summary(reg.gustavm1)
 
-reg.gustappk2 <- lm(gusta.vm100 ~ SEXO+EDAD+nivedu+nse.r+DOMINIO+
+reg.gustavm2 <- lm(gusta.vm100 ~ SEXO+EDAD+nivedu+nse.r+DOMINIO+
                       const.vm100+mdo.vm100+ind.ilib+ind.est+izde.e10, data = gicel1)
-summary(reg.gustappk2)
+summary(reg.gustavm2)
+
+# Voto
+
+table(gicel1$voto1v)
+
+gicel1$v.fuji1 <- gicel1$voto1v == "Fujimori"
+
+# Regresión Voto KF1
+library(fmsb)
+
+reg.votokf1a <- glm(v.fuji1~SEXO+EDAD+nivedu+nse.r+DOMINIO, data = gicel1, 
+                    family = "binomial")
+summary(reg.votokf1a)
+NagelkerkeR2(reg.votokf1a)
+
+reg.votokf1.b <- glm(v.fuji1 ~ SEXO+EDAD+nivedu+nse.r+DOMINIO+
+                     const.kf100+mdo.kf100+ind.ilib+ind.est+izde.e10, data = gicel1,
+                     family = "binomial")
+summary(reg.votokf1.b)
+NagelkerkeR2(reg.votokf1.b)
+
+reg.votokf1.c <- glm(v.fuji1 ~ SEXO+EDAD+nivedu+nse.r+DOMINIO+
+                       const.kf100+mdo.kf100+ind.ilib+ind.est+izde.e10+gusta.kf100+PF,
+                     data = gicel1,
+                     family = "binomial")
+summary(reg.votokf1.c)
+NagelkerkeR2(reg.votokf1.c)
+
+cdplot(factor(v.fuji1)~mdo.kf100, data=gicel1)
+
+prop.table(table(gicel1$PF, gicel1$g.kf2),2)*100
+
+
+gusta.fuji <- cut(gicel1$g)
+table(gicel1$)
+
+names(gicel1)

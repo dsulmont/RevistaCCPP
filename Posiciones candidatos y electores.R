@@ -118,3 +118,5 @@ ggplot(anti1, aes(x=pref.c, y=disc.cand, group = candidato2, shape=candidato2)) 
   ylim(0,100)
 
 
+
+
