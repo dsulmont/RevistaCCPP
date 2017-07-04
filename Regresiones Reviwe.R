@@ -55,34 +55,70 @@ summary(reg.gustavm2)
 table(gicel1$voto1v)
 
 gicel1$v.fuji1 <- gicel1$voto1v == "Fujimori"
+gicel1$v.ppk1 <- gicel1$voto1v == "PPK"
+gicel1$v.vm1 <- gicel1$voto1v == "Mendoza"
+
+gicel1$v.fuji2 <- gicel1$voto2v == "Fujimori"
+gicel1$v.ppk2 <- gicel1$voto2v == "PPK"
+
+table(gicel1$v.ppk2)
 
 # Regresión Voto KF1
+
 library(fmsb)
 
-reg.votokf1a <- glm(v.fuji1~SEXO+EDAD+nivedu+nse.r+DOMINIO, data = gicel1, 
-                    family = "binomial")
-summary(reg.votokf1a)
-NagelkerkeR2(reg.votokf1a)
+reg.votokf1.a <- glm(v.fuji1 ~ const.kf100+mdo.kf100+ind.ilib+ind.est+izde.e10,
+                     data = gicel1,
+                     family = "binomial")
+summary(reg.votokf1.a)
+NagelkerkeR2(reg.votokf1.a)
 
-reg.votokf1.b <- glm(v.fuji1 ~ SEXO+EDAD+nivedu+nse.r+DOMINIO+
-                     const.kf100+mdo.kf100+ind.ilib+ind.est+izde.e10, data = gicel1,
+reg.votokf1.b <- glm(v.fuji1 ~ const.kf100+mdo.kf100+ind.ilib+ind.est+izde.e10+gusta.kf100,
+                     data = gicel1,
                      family = "binomial")
 summary(reg.votokf1.b)
 NagelkerkeR2(reg.votokf1.b)
 
-reg.votokf1.c <- glm(v.fuji1 ~ SEXO+EDAD+nivedu+nse.r+DOMINIO+
-                       const.kf100+mdo.kf100+ind.ilib+ind.est+izde.e10+gusta.kf100+PF,
+reg.votokf2.a <- glm(v.fuji2 ~ const.kf100+mdo.kf100+ind.ilib+ind.est+izde.e10,
                      data = gicel1,
                      family = "binomial")
-summary(reg.votokf1.c)
-NagelkerkeR2(reg.votokf1.c)
+summary(reg.votokf2.a)
+NagelkerkeR2(reg.votokf2.a)
 
-cdplot(factor(v.fuji1)~mdo.kf100, data=gicel1)
+reg.votokf2.b <- glm(v.fuji1 ~ const.kf100+mdo.kf100+ind.ilib+ind.est+izde.e10+gusta.kf100+
+                       gusta.ppk100,
+                     data = gicel1,
+                     family = "binomial")
+summary(reg.votokf2.b)
+NagelkerkeR2(reg.votokf2.b)
 
-prop.table(table(gicel1$PF, gicel1$g.kf2),2)*100
+# Regresión Voto PPK
 
 
-gusta.fuji <- cut(gicel1$g)
-table(gicel1$)
+reg.votoppk1.a <- glm(v.ppk1 ~ const.ppk100+mdo.ppk100+ind.ilib+ind.est+izde.e10,
+                     data = gicel1,
+                     family = "binomial")
+summary(reg.votoppk1.a)
+NagelkerkeR2(reg.votoppk1.a)
 
-names(gicel1)
+reg.votoppk1.b <- glm(v.ppk1 ~ const.ppk100+mdo.ppk100+ind.ilib+ind.est+izde.e10+
+                        gusta.ppk100,
+                      data = gicel1,
+                      family = "binomial")
+summary(reg.votoppk1.b)
+NagelkerkeR2(reg.votoppk1.b)
+
+reg.votoppk2.a <- glm(v.ppk2 ~  const.ppk100+mdo.ppk100+ind.ilib+ind.est+izde.e10,
+                      data = gicel1,
+                      family = "binomial")
+summary(reg.votoppk2.a)
+NagelkerkeR2(reg.votoppk2.a)
+
+reg.votoppk2.b <- glm(v.ppk2 ~ const.ppk100+mdo.ppk100+ind.ilib+ind.est+izde.e10+
+                        gusta.kf100+gusta.ppk100,
+                     data = gicel1,
+                     family = "binomial")
+summary(reg.votoppk2.b)
+NagelkerkeR2(reg.votoppk2.b)
+
+cor(gicel1$gusta.ppk100, gicel1$gusta.vm100, use = "complete.obs")
