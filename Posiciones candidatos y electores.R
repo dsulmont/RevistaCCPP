@@ -91,32 +91,4 @@ png("pos_cand.png", width = 600, height = 500, res = 100)
 g.pos.cand
 dev.off()
 
-# Anticandidatos
-
-gicel.t$pref.c <- cut(gicel.t$gusta.c, breaks = 3)
-levels(gicel.t$pref.c) <- c("Negativa", "Media", "Positiva")
-table(gicel.t$pref.c) 
-
-anti1 <- summarySE(gicel.t, measurevar = "disc.cand", groupvars = c("candidato2", "pref.c"), 
-          na.rm = T)
-
-summarySE(gicel.t, measurevar = "estat.cand", groupvars = c("candidato2", "pref.c"), 
-          na.rm = T)
-
-summarySE(gicel.t, measurevar = "ind.ilib", groupvars = c("candidato2", "pref.c"), 
-          na.rm = T)
-
-anti1 <- na.omit(anti1[1:8, ])
-anti1
-
-pd <- position_dodge(0.1) # move them .05 to the left and right
-
-ggplot(anti1, aes(x=pref.c, y=disc.cand, group = candidato2, shape=candidato2)) +
-  geom_errorbar(aes(ymin=disc.cand-ci, ymax=disc.cand+ci), width=0.2, position=pd) +
-  geom_line(aes(linetype=candidato2), position=pd) +
-  geom_point(position=pd, size = 2.5) +
-  ylim(0,100)
-
-
-
 

@@ -22,7 +22,7 @@ df.sum <- na.omit(subset(sum.pos.cand, cand %in% c("Fujimori", "PPK", "Mendoza")
 
 library(ggplot2)
 
-ggplot(df.sum, aes(x=escala, y=izde.p, group = cand, shape = cand)) + 
+g.mdol<- ggplot(df.sum, aes(x=escala, y=izde.p, group = cand, shape = cand)) + 
   geom_point(size = 2) + geom_line(aes(linetype = cand)) + 
   scale_shape_discrete(name = "Candidatos") +
   scale_linetype_discrete(name = "Candidatos") +
@@ -31,6 +31,9 @@ ggplot(df.sum, aes(x=escala, y=izde.p, group = cand, shape = cand)) +
   ggtitle("Posición media de los candidatos en las escala Izquierda -\n Derecha, según ubicación en escalas de\n Mercado - Estado y Respeto a la Ley, por candidato") +
   theme(plot.title = element_text(hjust = 0.5))
 
+g.mdol
   
- 
+png("cand_mdo_ley.png", width = 600, height = 500, res = 100)
+g.mdol
+dev.off() 
   

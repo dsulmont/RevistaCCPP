@@ -1,30 +1,5 @@
-library(fmsb)
-
-# Voto 1ra vuelta
-
-reg.votokf1 <- glm(v.fuji1 ~ const.kf100+mdo.kf100+ind.ilib+ind.est+izde.e10+gusta.kf100,
-                     data = gicel1,
-                     family = "binomial")
-summary(reg.votokf1)
-NagelkerkeR2(reg.votokf1)
-
-reg.votoppk1 <- glm(v.ppk1 ~ const.ppk100+mdo.ppk100+ind.ilib+ind.est+
-                      izde.e10+gusta.ppk100,
-                   data = gicel1,
-                   family = "binomial")
-summary(reg.votoppk1)
-NagelkerkeR2(reg.votoppk1)
-
-reg.votovm1 <- glm(v.vm1 ~ const.vm100+mdo.vm100+ind.ilib+ind.est+
-                      izde.e10+gusta.vm100,
-                    data = gicel1,
-                    family = "binomial")
-summary(reg.votovm1)
-NagelkerkeR2(reg.votovm1)
-
 # Voto 2da Vuelta
 
-table(gicel$voto2v)
 
 library(car)
 
@@ -37,8 +12,8 @@ table(gicel1$voto.fuji2)
 
 reg.voto2.a <- glm(voto.fuji2 ~ const.kf100 + const.ppk100 + mdo.kf100 + mdo.ppk100 +
                      ind.ilib + ind.est + izde.e10,
-                     data = gicel1,
-                     family = "binomial")
+                   data = gicel1,
+                   family = "binomial")
 summary(reg.voto2.a)
 NagelkerkeR2(reg.voto2.a)
 
@@ -90,7 +65,7 @@ coef.2dav
 
 coef.2dav$modelo2 <- factor(coef.2dav$modelo, 
                             labels = c("Modelo 1, Pseudo R^{2} = 0.59",
-                             "Modelo 2, Pseudo R^{2},= 0.88"))
+                                       "Modelo 2, Pseudo R^{2},= 0.88"))
 
 coef.2dav$modelo2 <- factor(coef.2dav$modelo, 
                             labels = c("Pseudo-R[1]^{2}==0.59",
@@ -103,7 +78,7 @@ library(ggplot2)
 
 g <- ggplot(coef.2dav, aes(x=idvar, y=b)) + geom_point() +
   geom_errorbar(aes(ymin = low, ymax = hi), width = 0.2) + 
-  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_hline(yintercept = 0, linetype = "dashed", colour = "#666666") +
   xlab("") + ylab("b") +
   facet_grid(.~ modelo2, labeller = label_parsed) +
   coord_flip() + theme_bw() +
@@ -112,4 +87,6 @@ g <- ggplot(coef.2dav, aes(x=idvar, y=b)) + geom_point() +
 
 g
 
-
+png("modelos2v.png", width = 600, height = 500, res = 100)
+g
+dev.off() 

@@ -73,17 +73,21 @@ pos.izder
 pos.izder$eval <- factor(pos.izder$eval)
 levels(pos.izder$eval) <- c("Elector", "Humala", "Fujimori", "PPK", "Mendoza")
 
+pos.izder$mean10 <- pos.izder$mean*10
+pos.izder$ci10 <- pos.izder$CI.mean.0.95*10
 
 library(ggplot2)
 
-g.izde11_16 <- ggplot(pos.izder, aes(x = eval, y = mean)) + geom_point() +
-  ylim(2, 8) +
-  geom_errorbar(aes(ymin = mean - CI.mean.0.95, ymax = mean + CI.mean.0.95), width = 0.1) +
+g.izde11_16 <- ggplot(pos.izder, aes(x = eval, y = mean10)) + geom_point() +
+  ylim(20, 80) +
+  geom_errorbar(aes(ymin = mean10 - ci10, 
+                    ymax = mean10 + ci10), width = 0.1) +
   facet_grid(.~ year, scales = "free", space = "free") +
   ylab("Escala Izquierda - Derecha") + xlab("") +
-  ggtitle("Posición media del elector y de los principales candidatos presidenciales 2011 y 2016 \nen la escala Izquierda - Derecha, según elección \nMedia e intervalo de confianza al 95%") +
-  theme_bw()
+  theme_bw() +
+  ggtitle("Posición media del elector y de los principales candidatos\n presidenciales 2011 y 2016 en la escala Izquierda - Derecha\nMedia e intervalo de confianza al 95%") +
+  theme(plot.title = element_text(hjust = 0.5))
 
-png("g_izde11y16.png", width = 800, height = 600, res = 100)
+png("g_izde11y16.png", width = 600, height = 500, res = 100)
 g.izde11_16
 dev.off()
